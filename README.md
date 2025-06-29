@@ -63,16 +63,24 @@ Estos indicadores se calculan mediante medidas personalizadas con **DAX**.
 
 PowerBI_Finanzas_personales/
 │
+
 ├─ Data/
+
 │ └─ finanzas_personales.xlsx
 │
+
 ├─ Powerbi/
+
 │ └─ Proyecto4_FinanzasPersonales.pbix
 │
+
 ├─ power_query/
+
 │ └─ transformaciones
 │
+
 ├─ Visualizaciones/
-│ └─ captura_dashboard.png
+
 │
+
 └─ README.md

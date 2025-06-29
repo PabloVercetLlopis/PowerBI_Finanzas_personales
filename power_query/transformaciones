@@ -1,0 +1,92 @@
+let
+    Origen = Excel.Workbook(File.Contents("C:\0-Pablo\PABLO\Pablo\Desktop\Cursos\Power BI\Proyecto4_Finanzas Personales\Finanzas.xlsx"), null, true),
+    TablaGastos_Table = Origen{[Item="TablaGastos",Kind="Table"]}[Data],
+    #"Tipo cambiado" = Table.TransformColumnTypes(TablaGastos_Table,{{"Categoria", type text}, {"Fecha", type date}, {"Cantidad", Int64.Type}}),
+    #"Personalizada agregada" = Table.AddColumn(#"Tipo cambiado", "Tipo", each "Gastos"),
+    #"Columnas reordenadas" = Table.ReorderColumns(#"Personalizada agregada",{"Tipo", "Categoria", "Fecha", "Cantidad"})
+in
+    #"Columnas reordenadas"
+
+    let
+    Origen = Excel.Workbook(File.Contents("C:\0-Pablo\PABLO\Pablo\Desktop\Cursos\Power BI\Proyecto4_Finanzas Personales\Finanzas.xlsx"), null, true),
+    TablaINGRESOS_Table = Origen{[Item="TablaINGRESOS",Kind="Table"]}[Data],
+    #"Tipo cambiado" = Table.TransformColumnTypes(TablaINGRESOS_Table,{{"Categoria", type text}, {"Fecha", type date}, {"Cantidad", Int64.Type}}),
+    #"Personalizada agregada" = Table.AddColumn(#"Tipo cambiado", "Tipo", each "Ingresos"),
+    #"Columnas reordenadas" = Table.ReorderColumns(#"Personalizada agregada",{"Tipo", "Categoria", "Fecha", "Cantidad"})
+in
+    #"Columnas reordenadas"
+
+    let
+    Origen = Excel.Workbook(File.Contents("C:\0-Pablo\PABLO\Pablo\Desktop\Cursos\Power BI\Proyecto4_Finanzas Personales\Finanzas.xlsx"), null, true),
+    TablaMetas_Table = Origen{[Item="TablaMetas",Kind="Table"]}[Data],
+    #"Tipo cambiado" = Table.TransformColumnTypes(TablaMetas_Table,{{"Fecha", type text}, {"Remuneracion", Int64.Type}, {"Online", Int64.Type}}),
+    #"Prefijo agregado" = Table.TransformColumns(#"Tipo cambiado", {{"Fecha", each "01/" & _, type text}}),
+    #"Se ha anulado la dinamización de las columnas seleccionadas únicamente." = Table.Unpivot(#"Prefijo agregado", {"Online", "Remuneracion"}, "Atributo", "Valor"),
+    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Se ha anulado la dinamización de las columnas seleccionadas únicamente.",{{"Atributo", "Categoria"}, {"Valor", "Cantidad"}}),
+    #"Personalizada agregada" = Table.AddColumn(#"Columnas con nombre cambiado", "Tipo", each "Meta"),
+    #"Columnas reordenadas" = Table.ReorderColumns(#"Personalizada agregada",{"Tipo", "Categoria", "Fecha", "Cantidad"})
+in
+    #"Columnas reordenadas"
+
+    let
+    Origen = Excel.Workbook(File.Contents("C:\0-Pablo\PABLO\Pablo\Desktop\Cursos\Power BI\Proyecto4_Finanzas Personales\Finanzas.xlsx"), null, true),
+    TablaPresupuesto_Table = Origen{[Item="TablaPresupuesto",Kind="Table"]}[Data],
+    #"Tipo cambiado" = Table.TransformColumnTypes(TablaPresupuesto_Table,{{"Categoria", type text}, {"01/19", Int64.Type}, {"02/19", Int64.Type}, {"03/19", Int64.Type}, {"04/19", Int64.Type}, {"05/19", Int64.Type}, {"06/19", Int64.Type}, {"07/19", Int64.Type}, {"08/19", Int64.Type}, {"09/19", Int64.Type}, {"10/19", Int64.Type}, {"11/19", Int64.Type}, {"12/19", Int64.Type}, {"01/20", Int64.Type}, {"02/20", Int64.Type}, {"03/20", Int64.Type}, {"04/20", Int64.Type}, {"05/20", Int64.Type}, {"06/20", Int64.Type}, {"07/20", Int64.Type}, {"08/20", Int64.Type}, {"09/20", Int64.Type}, {"10/20", Int64.Type}, {"11/20", Int64.Type}, {"12/20", Int64.Type}}),
+    #"Se ha anulado la dinamización de las columnas seleccionadas únicamente." = Table.Unpivot(#"Tipo cambiado", {"01/19", "02/19", "03/19", "04/19", "05/19", "06/19", "07/19", "08/19", "09/19", "10/19", "11/19", "12/19", "01/20", "02/20", "03/20", "04/20", "05/20", "06/20", "07/20", "08/20", "09/20", "10/20", "11/20", "12/20"}, "Atributo", "Valor"),
+    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Se ha anulado la dinamización de las columnas seleccionadas únicamente.",{{"Valor", "Cantidad"}, {"Atributo", "Fecha"}}),
+    #"Personalizada agregada" = Table.AddColumn(#"Columnas con nombre cambiado", "Tipo", each "Presupuesto"),
+    #"Columnas reordenadas" = Table.ReorderColumns(#"Personalizada agregada",{"Tipo", "Categoria", "Fecha", "Cantidad"}),
+    #"Prefijo agregado" = Table.TransformColumns(#"Columnas reordenadas", {{"Fecha", each "01/" & _, type text}}),
+    #"Tipo cambiado1" = Table.TransformColumnTypes(#"Prefijo agregado",{{"Fecha", type date}})
+in
+    #"Tipo cambiado1"
+
+    let
+    Origen = Table.Combine({TablaGastos, TablaINGRESOS})
+in
+    Origen
+
+    let
+    Origen = Table.Combine({TablaMetas, TablaPresupuesto})
+in
+    Origen
+
+
+let
+    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+in
+    #"Columnas quitadas"
+
+
+let
+    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("VcxBCgIxDIXhq0jXcwtxLYyzK7MonScE2hfJRM9vVRSzS76fJOd0ZhMiTd9hnXKa0e+ElSrKV3HT/R2O2mUrgU4N1U3q8C0GusFB6QK6hjYPKYdAF9hjfBnbvy5ouCrj9WKF+03NEfgz/WR9Ag==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Categoria = _t, #"Cat-Otros" = _t]),
+    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Categoria", type text}, {"Cat-Otros", type text}})
+in
+    #"Tipo cambiado"
+
+
+let
+    Origen = #table(type table[Ultima Actualización=datetime], {{DateTime.LocalNow()}})
+in
+    Origen
+
+let
+    Origen = Folder.Files("C:\Pablo\Desktop\Cursos\Power BI\Proyecto4_Finanzas Personales\Calendarios 20192020"),
+    #"Archivos ocultos filtrados1" = Table.SelectRows(Origen, each [Attributes]?[Hidden]? <> true),
+    #"Invocar función personalizada1" = Table.AddColumn(#"Archivos ocultos filtrados1", "Transformar archivo", each #"Transformar archivo"([Content])),
+    #"Columnas con nombre cambiado1" = Table.RenameColumns(#"Invocar función personalizada1", {"Name", "Source.Name"}),
+    #"Otras columnas quitadas1" = Table.SelectColumns(#"Columnas con nombre cambiado1", {"Source.Name", "Transformar archivo"}),
+    #"Columna de tabla expandida1" = Table.ExpandTableColumn(#"Otras columnas quitadas1", "Transformar archivo", Table.ColumnNames(#"Transformar archivo"(#"Archivo de ejemplo"))),
+    #"Tipo cambiado" = Table.TransformColumnTypes(#"Columna de tabla expandida1",{{"Source.Name", type text}, {"Fecha", type date}}),
+    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Source.Name"}),
+    #"Año insertado" = Table.AddColumn(#"Columnas quitadas", "Año", each Date.Year([Fecha]), Int64.Type),
+    #"Mes insertado" = Table.AddColumn(#"Año insertado", "Mes", each Date.Month([Fecha]), Int64.Type),
+    #"Nombre del mes insertado" = Table.AddColumn(#"Mes insertado", "Nombre del mes", each Date.MonthName([Fecha]), type text),
+    #"Primeros caracteres insertados" = Table.AddColumn(#"Nombre del mes insertado", "Primeros caracteres", each Text.Start([Nombre del mes], 3), type text),
+    #"Texto insertado después del delimitador" = Table.AddColumn(#"Primeros caracteres insertados", "Texto después del delimitador", each Text.AfterDelimiter(Text.From([Fecha], "es-ES"), "/"), type text),
+    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Texto insertado después del delimitador",{{"Texto después del delimitador", "mes/año"}})
+in
+    #"Columnas con nombre cambiado"
+    
